@@ -2,6 +2,7 @@ local M = {}
 ---@type crook.Opt
 local config = require("crook.config")
 local utils = require("crook.utils")
+local control = require("crook.control")
 
 
 --- execute hook_point
@@ -9,7 +10,9 @@ local utils = require("crook.utils")
 ---@param args crook.ArgList
 local function exec_hooked_point(hook_point, args)
 	for _, hook in ipairs(hook_point.hooks) do
-		hook.proc({ args = args })
+		if control.get_group_state(hook.group) then
+			hook.proc({ args = args })
+		end
 	end
 	return hook_point.fallback(unpack(args))
 end
