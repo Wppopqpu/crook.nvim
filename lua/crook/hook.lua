@@ -1,5 +1,3 @@
--- FIXME:delete "metatable" hook method because it is wrong and ridiculus
-
 local M = {}
 ---@type crook.Opt
 local config = require("crook.config")
@@ -47,14 +45,6 @@ local function get_hook_point(root, field)
 	return nil
 end
 
---- returns hooked wrappers of a given table
---- assumes metatable exists
----@param root table
----@return table<function> | nil
-local function get_hooked_wrappers(root)
-	return getmetatable(root)[config.hooked_wrapper_field]
-end
-
 --- install hook point for a specific field
 --- assumes metatable exists
 ---@param root table @table that contains the field
@@ -84,41 +74,9 @@ local function install_hooked_wrapper(root, field, hook_point)
 
 	---@diagnostic disable-next-line: param-type-mismatch
 	local wrapper = get_hooked_wrapper(hook_point)
-	if "replace" == config.hook_method then
-		rawset(root, field, wrapper)
-		return
-	end
-	if "metatable" == config.hook_method then
-		---@type metatable
-		local metatable = getmetatable(root)
-		---@type string
-		local wrapper_field = config.hook_point_field
-		metatable[wrapper_field] = metatable[wrapper_field] or {}
-
-		metatable[wrapper_field][field] = wrapper
-		return
-	end
+	rawset(root, field, wrapper)
 end
 
---- installs new __index into metatable to make hook works
---- used when config.hook_method == "metatable"
---- assumes metatable exists
----@param root table
-local function install_hook_router(root)
-	---@type metatable
-	local metatable = getmetatable(root)
-	local old_index_func = metatable.__index or function (t, k)
-		return t[k]
-	end
-
-	metatable.__index = function(t, k)
-		---@type metatable
-		if nil == get_hook_point(t, k) then
-			return old_index_func(t, k)
-		end
-		return get_hooked_wrappers(t)[k]
-	end
-end
 
 --- prepares hook infrastructure for a specific field
 ---@param root table @table that contains the field
@@ -132,14 +90,6 @@ local function prepare_hook_infrastructure(root, field)
 		return
 	end
 
-	-- if there are no hook points,
-	-- then __index has not been changed yet
-	if "metatable" == config.hook_method
-		and nil == get_hook_points(root)
-		then
-		install_hook_router(root)
-		-- utils.log_inspected(getmetatable(root))
-	end
 	install_hook_point(root, field)
 	install_hooked_wrapper(root, field)
 	-- utils.log_inspected(getmetatable(root))

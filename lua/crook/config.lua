@@ -9,7 +9,7 @@ local M = {
 ---@param opt crook.Opt
 local function setup(opt)
 	if nil ~= opt.hook_method and
-		not vim.tbl_contains({ "metatable", "replace" }, opt.hook_method)
+		not vim.tbl_contains({ "replace" }, opt.hook_method)
 		then
 		error("invalid hook_method")
 	end

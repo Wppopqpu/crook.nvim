@@ -20,6 +20,6 @@
 ---@field public hooks crook.HookInstance[] @hooks to be called
 
 ---@class crook.Opt
----@field public hook_method "metatable" | "replace" | nil @specifies how to hook
+---@field public hook_method "replace" | nil @specifies how to hook
 ---@field public hook_point_field string | nil @field used to store hook_points in metatable
 ---@field public hooked_wrapper_field string | nil @field used to store hooked wrappers in metatable
