@@ -84,7 +84,7 @@ end
 --- prepares hook infrastructure for a specific field
 ---@param root table @table that contains the field
 ---@param field string
-local function prepare_hook_infrastructure(root, field)
+function M.prepare_hook(root, field)
 	-- set the metatable if it doesn't exist
 	utils.prepare_metatable(root)
 
@@ -177,7 +177,7 @@ function M.install_hook(root, field, hook)
 	assert("function" == type(hook.proc))
 	assert("function" == type(root[field]))
 
-	prepare_hook_infrastructure(root, field)
+	M.prepare_hook(root, field)
 	__install_hook(root, field, hook)
 end
 
