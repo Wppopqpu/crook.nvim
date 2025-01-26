@@ -5,7 +5,7 @@
 
 ---@alias crook.Hook fun(context: crook.HookContext)
 
----@alias crook.HookGroup number
+---@alias crook.HookGroup integer
 
 ---@class crook.HookInstance
 ---@field public proc crook.Hook
