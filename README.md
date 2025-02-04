@@ -1,4 +1,4 @@
-# Crook.nvim
+# Crook.nvim (***WIP***)
 
 ## INTRO
 
@@ -28,6 +28,7 @@ lazy.nvim:
 
 ```lua
 local crook = require("crook")
+local utils = require("crook.utils")
 
 -- OPTIONAL
 crook.prepare_hook(vim.api, "nvim_open_win")
@@ -35,12 +36,18 @@ crook.prepare_hook(vim.api, "nvim_open_win")
 local group = crook.get_group("my_group")
 
 crook.install_hook(vim.api, "nvim_open_win", {
+    -- to be run before fallback
     proc = function(ctx)
-        local utils = require("crook.utils")
         utils.log("Hello") -- do something you want
 
         utils.log_inspected(ctx.args) -- read the arguments
         ctx.args[1] = 0 -- modify the arguments
+    end,
+    -- to be run after fallback
+    proc_post = function(ctx)
+        utils.log_inspected(ctx.shared) -- read the shared table
+        utils.log_inspected(ctx.res)
+        ctx.res = 42 -- modify the result
     end,
     -- OPTIONAL
     -- default group is "none" (0)
