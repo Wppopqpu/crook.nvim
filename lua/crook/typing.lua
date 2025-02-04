@@ -2,6 +2,8 @@
 
 ---@class crook.HookContext
 ---@field public args crook.ArgList @args to be used
+---@field public res any | nil @result of the hooked function
+---@field public shared table @enable communication between hooks
 
 ---@alias crook.Hook fun(context: crook.HookContext)
 
@@ -9,6 +11,7 @@
 
 ---@class crook.HookInstance
 ---@field public proc crook.Hook
+---@field public proc_post crook.Hook
 ---@field public group crook.HookGroup | nil
 ---@field public prefer "first" | "last" | nil @controls exec order
 ---@field public before crook.HookGroup[] | nil @to run before

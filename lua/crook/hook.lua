@@ -9,12 +9,28 @@ local control = require("crook.control")
 ---@param hook_point crook.HookPoint
 ---@param args crook.ArgList
 local function exec_hooked_point(hook_point, args)
+	---@type crook.HookContext
+	local ctx = {
+		args = args,
+		shared = {},
+	}
 	for _, hook in ipairs(hook_point.hooks) do
 		if control.get_group_state(hook.group) then
 			hook.proc({ args = args })
 		end
 	end
-	return hook_point.fallback(unpack(args))
+	ctx.res = hook_point.fallback(unpack(args))
+	for index = #hook_point.hooks, 1, -1 do
+		local hook = hook_point.hooks[index]
+		if hook.proc_post == nil then
+			goto continue
+		end
+		if control.get_group_state(hook.group) then
+			hook.proc_post(ctx)
+		end
+		::continue::
+	end
+	return ctx.res
 end
 
 --- get wrapper to replace the function to be hooked
